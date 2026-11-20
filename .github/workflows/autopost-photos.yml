@@ -38,7 +38,7 @@ jobs:
           DEFAULT_PHOTO_HASHTAGS: "#photoshoot #photography #portrait #portraitphotography #editorial #editorialphotography #modelshoot #studio #studiophotography #film #35mm #analog #goldenhour #naturallight #aestheticphoto #visuals #frame #behindthescenes #photooftheday #instaphoto #ootd #outfitoftheday #lookbook #streetstyle #fashion #fashionstyle #styleinspo #outfitinspo #chic #chicstyle #minimalistfashion #trendyoutfit #whatiwore #stylediary #fashioneditorial #highfashion #casualchic #glamlook #eveninglook #luxestyle #dailylook #fashionista #outfitideas #styleoftheday #streetfashion #beauty #beautymodel #glam #makeup #makeuplook #glow #glowup #aesthetic #aesthetics #feminine #feminineenergy #muse #model #modelvibes #naturalbeauty #softglam #cleangirlaesthetic #thatgirl #pretty #portraitmood #instagood #instadaily #explore #explorepage #viral #trending #fyp #foryou #mood #vibes"
           PHOTO_HASHTAGS_COUNT: '10'
           IG_FIRST_COMMENT: ${{ secrets.IG_FIRST_COMMENT }}
-          DEFAULT_FIRST_COMMENT: "Больше фото и бэкстейдж в нашем Telegram — ссылка в шапке профиля 👆 (или @stage_style_media)"
+          DEFAULT_FIRST_COMMENT: "Больше фото и бэкстейдж в нашем Telegram — ссылка в шапке профиля 👆 (или stage_style_media)"
           PHOTO_SORT_ORDER: 'random'
         run: node scripts/autopost-photos.mjs
 
