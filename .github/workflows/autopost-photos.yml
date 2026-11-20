@@ -1,0 +1,55 @@
+name: Instagram Photos AutoPost
+
+on:
+  schedule:
+    # Каждый 1 час (в :30)
+    - cron: '30 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: instagram-photos-autopost
+  cancel-in-progress: false
+
+jobs:
+  publish-next-photo:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Publish next photo from Google Drive to Instagram
+        env:
+          GDRIVE_PHOTOS_FOLDER_ID: ${{ secrets.GDRIVE_PHOTOS_FOLDER_ID }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_PHOTO_CAPTIONS: ${{ secrets.IG_PHOTO_CAPTIONS }}
+          DEFAULT_PHOTO_CAPTIONS: "Golden hour frame ✨||Editorial mood in every detail||Soft light, sharp silhouette||Studio session · pure aesthetics||Captured in the moment 📸||Minimalist look, maximum presence||Late afternoon glow||Behind the lens today||Timeless frame 🤍||Chasing natural light||New lookbook drop||Moodboard energy ✨||Effortless elegance||Details make the look||In my element today||Quiet luxury aesthetic||Sunlight & shadows||Fresh from the photoshoot||Styled to perfection||Clean lines and soft tones||High-fashion state of mind||Portrait of the day ✨||Where style meets mood||Natural light never lies||New angle, same energy||Main character frame||Focus on the vibe||Classic look, modern mood||Frame worth keeping 🤍||Less noise, more aesthetic||Soft glam & crisp lines||City light session||Everyday editorial||Styled for the moment||Pure visual harmony||Captured between takes||Weekend lookbook vibes||Shine without trying||Aesthetic check ✨||Today’s favorite shot||Dressed for the lens||Subtle glow, strong look||Outtake from today’s shoot||Warm tones & calm energy||Fashion is a mood||Camera loves natural light||Simplicity is iconic||Look of the hour ✨||Curated visual story||Vibe check passed||On set & feeling good||Grace in every frame||Modern muse aesthetic||Just another studio story||Mirror of today’s mood||Textures, light & style||Elevated everyday look||Shot on golden hour 🌅||Unfiltered visual poetry||Keep it chic, keep it real"
+          IG_PHOTO_HASHTAGS: ${{ secrets.IG_PHOTO_HASHTAGS }}
+          DEFAULT_PHOTO_HASHTAGS: "#photoshoot #photography #portrait #portraitphotography #editorial #editorialphotography #modelshoot #studio #studiophotography #film #35mm #analog #goldenhour #naturallight #aestheticphoto #visuals #frame #behindthescenes #photooftheday #instaphoto #ootd #outfitoftheday #lookbook #streetstyle #fashion #fashionstyle #styleinspo #outfitinspo #chic #chicstyle #minimalistfashion #trendyoutfit #whatiwore #stylediary #fashioneditorial #highfashion #casualchic #glamlook #eveninglook #luxestyle #dailylook #fashionista #outfitideas #styleoftheday #streetfashion #beauty #beautymodel #glam #makeup #makeuplook #glow #glowup #aesthetic #aesthetics #feminine #feminineenergy #muse #model #modelvibes #naturalbeauty #softglam #cleangirlaesthetic #thatgirl #pretty #portraitmood #instagood #instadaily #explore #explorepage #viral #trending #fyp #foryou #mood #vibes"
+          PHOTO_HASHTAGS_COUNT: '10'
+          IG_FIRST_COMMENT: ${{ secrets.IG_FIRST_COMMENT }}
+          DEFAULT_FIRST_COMMENT: "Больше фото и бэкстейдж в нашем Telegram — ссылка в шапке профиля 👆 (или @stage_style_media)"
+          PHOTO_SORT_ORDER: 'random'
+        run: node scripts/autopost-photos.mjs
+
+      - name: Commit updated posted_photos.json
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add posted_photos.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: mark published photo in posted_photos.json"
+            git push
+          else
+            echo "No changes to posted_photos.json"
+          fi
